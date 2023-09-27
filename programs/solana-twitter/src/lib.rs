@@ -7,22 +7,22 @@ declare_id!("Ca1Aifp4bnnNscpy7fSvucPkQ3rTzHx6vQ2GTD99kcRf");
 pub mod solana_twitter {
     use super::*;
     pub fn send_tweet(ctx: Context<SendTweet>, topic: String, content: String) -> Result<()> {
-    let tweet: &mut Account<Tweet> = &mut ctx.accounts.tweet;
-    let author: &Signer = &ctx.accounts.author;
-    let clock: Clock = Clock::get().unwrap();
-    if topic.chars().count() > 50 {
-        return Err(ErrorCode::TopicTooLong.into())
-    }
+        let tweet: &mut Account<Tweet> = &mut ctx.accounts.tweet;
+        let author: &Signer = &ctx.accounts.author;
+        let clock: Clock = Clock::get().unwrap();
+        if topic.chars().count() > 50 {
+            return Err(ErrorCode::TopicTooLong.into());
+        }
 
-    if content.chars().count() > 280 {
-        return Err(ErrorCode::ContentTooLong.into())
+        if content.chars().count() > 280 {
+            return Err(ErrorCode::ContentTooLong.into());
+        }
+        tweet.author = *author.key;
+        tweet.timestamp = clock.unix_timestamp;
+        tweet.topic = topic;
+        tweet.content = content;
+        Ok(())
     }
-    tweet.author = *author.key;
-    tweet.timestamp = clock.unix_timestamp;
-    tweet.topic = topic;
-    tweet.content = content;
-    Ok(())
-}
 }
 
 #[derive(Accounts)]
